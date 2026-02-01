@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>💌 Pentru Georgia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    background:radial-gradient(circle,#ffe6eb,#f9c5d1);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI',sans-serif;
+    transition:opacity .5s, transform .5s;
+}
+
+.fadeout{
+    opacity:0;
+    transform:scale(1.1);
+}
+
+.envelope{
+    width:360px;
+    height:240px;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 25px 70px rgba(0,0,0,.35);
+    cursor:pointer;
+    position:relative;
+}
+
+.seal{
+    width:85px;
+    height:85px;
+    background:linear-gradient(135deg,#c4002f,#ff003c);
+    border-radius:50%;
+    position:absolute;
+    top:78px;
+    left:137px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    font-weight:900;
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.15)}
+    100%{transform:scale(1)}
+}
+
+.break{ animation:breakSeal .8s forwards; }
+@keyframes breakSeal{
+    to{transform:scale(0) rotate(1200deg);opacity:0}
+}
+
+.letter{
+    display:none;
+    padding:20px;
+    text-align:center;
+}
+
+.bear{ font-size:90px; }
+
+.buttons{
+    margin-top:20px;
+    display:flex;
+    gap:15px;
+    justify-content:center;
+}
+
+button{
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    font-size:17px;
+    cursor:pointer;
+    min-width:110px;
+}
+
+#yes{
+    background:#ff2f92;
+    color:white;
+    box-shadow:0 0 20px #ff2f92;
+}
+
+#no{
+    background:#ff2f92;
+    color:white;
+    opacity:.85;
+}
+
+.shake{ animation:shake .2s infinite; }
+@keyframes shake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-5px)}
+    50%{transform:translateX(5px)}
+    75%{transform:translateX(-5px)}
+    100%{transform:translateX(0)}
+}
+
+.explode{ animation:explode .6s forwards; }
+@keyframes explode{
+    0%{transform:scale(1);opacity:1}
+    40%{transform:scale(1.4)}
+    100%{transform:scale(0);opacity:0}
+}
+.flash{
+    animation:flash .5s ease;
+}
+@keyframes flash{
+    0%{background:#fff}
+    100%{background:radial-gradient(circle,#ffe6eb,#f9c5d1);}
+}
+
+/* inimioare plutitoare */
+.heart{
+    position:fixed;
+    font-size:24px;
+    animation:floatUp 1.5s ease-out forwards;
+    pointer-events:none;
+}
+
+@keyframes floatUp{
+    0%{transform:translateY(0) scale(1); opacity:1;}
+    100%{transform:translateY(-200px) scale(1.8); opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/10/26/audio_86aefaa1c2.mp3">
+</audio>
+
+<audio id="clickSound">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_3c9b0f6a0d.mp3">
+</audio>
+
+<div class="envelope" id="env">
+    <div class="seal" id="seal">OPEN</div>
+
+    <div class="letter" id="letter">
+        <div class="bear">🐻💐</div>
+        <h2 id="text"></h2>
+        <p id="whisper" style="font-style:italic;opacity:.7"></p>
+
+        <div class="buttons">
+            <button id="yes">Yes 💖</button>
+            <button id="no">No</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const env = document.getElementById("env");
+const seal = document.getElementById("seal");
+const letter = document.getElementById("letter");
+const text = document.getElementById("text");
+const whisper = document.getElementById("whisper");
+const no = document.getElementById("no");
+const yes = document.getElementById("yes");
+const music = document.getElementById("music");
+const clickSound = document.getElementById("clickSound");
+
+const message = "Georgia… will you be my Valentine?";
+let index = 0;
+let noClicks = 0;
+let opened = false;
+
+env.onclick = () => {
+    if(opened) return;
+    opened = true;
+
+    seal.classList.add("break");
+    music.volume = 0.6;
+    music.play();
+
+    setTimeout(()=>{
+        letter.style.display = "block";
+        typeWriter();
+    },700);
+};
+
+function typeWriter(){
+    text.textContent = "";
+    index = 0;
+
+    const interval = setInterval(()=>{
+        if(index >= message.length){
+            clearInterval(interval);
+            return;
+        }
+        text.textContent += message[index];
+        index++;
+    },60);
+}
+
+no.addEventListener("mouseenter", ()=> no.classList.add("shake"));
+no.addEventListener("mouseleave", ()=> no.classList.remove("shake"));
+
+no.addEventListener("click", ()=>{
+    noClicks++;
+    clickSound.currentTime = 0;
+    clickSound.play();
+
+    if(noClicks === 1){ whisper.textContent = "Mda.. n-ai cum 😏"; return; }
+    if(noClicks === 2){ whisper.textContent = "Tu chiar inca speri nu?:)))"; return; }
+    if(noClicks === 3){ whisper.textContent = "euu zic sa te calmezi faaai"; return; }
+
+    whisper.textContent = "AAAA da? ALEGE ACUMA SA TE VAD";
+    no.classList.remove("shake");
+    no.classList.add("explode");
+
+    setTimeout(()=>{ no.style.display="none"; },600);
+});
+
+/* 💖 YES REDIRECT */
+yes.onclick = () => {
+    document.body.classList.add("fadeout");
+    music.pause();
+    clickSound.currentTime = 0;
+    clickSound.play();
+
+    setTimeout(() => {
+        window.location.href = "yes.html";
+    }, 500);
+};
+</script>
+
+</body>
+</html>
